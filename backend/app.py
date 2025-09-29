@@ -4,6 +4,7 @@ from pathlib import Path
 import uuid
 from werkzeug.utils import secure_filename
 import random
+from youtube import is_youtube_url, download_youtube_audio
 
 app = Flask(__name__, static_folder="../frontend", static_url_path="/")
 
@@ -103,6 +104,17 @@ def add_song():
     position = data.get("position", "end")
     idx = int(data.get("index", 0))
     target = (data.get("playlist") or pm.active)
+    
+    # Manejar URLs de YouTube
+    if is_youtube_url(url):
+        result = download_youtube_audio(url, MEDIA_DIR)
+        if 'error' in result:
+            return jsonify({"error": f"Error processing YouTube URL: {result['error']}"}), 400
+        url = result['url']
+        if not title or title == "Untitled":
+            title = result['title']
+        if not artist or artist == "Unknown":
+            artist = result['artist']
     if target not in pm.playlists:
         return jsonify({"error": "playlist not found"}), 404
     s = new_song(title, artist, url)
