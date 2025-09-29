@@ -1,5 +1,5 @@
-import { store } from "..Store.js";
-import { toggleFavorite, setCurrent } from "..api.js";
+import { store } from "../state/Store.js";
+import { toggleFavorite, setCurrent } from "../Utils/api.js";
 
 export class Favorites {
   constructor() {

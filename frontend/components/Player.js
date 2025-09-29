@@ -1,5 +1,5 @@
-import { store } from "..Store.js";
-import { next, prev, setMode, togglePlayPause } from "..api.js";
+import { store } from "../state/Store.js";
+import { next, prev, setMode, togglePlayPause } from "../Utils/api.js";
 
 export class Player {
   constructor() {
