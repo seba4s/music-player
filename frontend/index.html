@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Winampish Player - Reproductor de Música</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-theme="dark">
+  <div class="bg-gradient"></div>
+
+  <!-- Botón de tema oscuro/claro -->
+  <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.09-1.38A7 7 0 0112 21a7 7 0 01-6.95-6.31C5.04 14.22 5 13.76 5 13.3a9 9 0 009-9z"/>
+    </svg>
+  </button>
+
+  <div class="shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar glass">
+      <div class="brand">
+        <div class="logo">⧖</div>
+        <div class="brand-text">
+          <strong>winampish</strong>
+          <span>player</span>
+        </div>
+      </div>
+
+      <nav class="side-nav">
+        <p class="section">My library</p>
+        <a class="item" href="#tracks"><span>🎵</span>Tracks</a>
+        <a class="item" href="#albums"><span>💿</span>Albums</a>
+        <a class="item active" href="#playlists"><span>📃</span>Playlists</a>
+        <a class="item" href="#podcasts"><span>🎙️</span>Podcasts</a>
+        <a class="item" href="#radio"><span>📡</span>Radio</a>
+        <a class="item" href="#creators"><span>👤</span>Creators</a>
+
+        <p class="section">My playlists</p>
+        <div class="playlist-picker">
+          <select id="playlists" aria-label="Seleccionar playlist">
+            <option value="">Cargando...</option>
+          </select>
+          <div class="picker-actions">
+            <button id="deletePlaylist" class="btn ghost" title="Eliminar playlist" disabled>🗑</button>
+          </div>
+          <form id="newPlaylistForm" class="new-pl">
+            <input name="name" placeholder="Nueva playlist" required maxlength="50" />
+            <button type="submit" class="btn ghost" title="Crear playlist">＋</button>
+          </form>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="content">
+      <section class="grid">
+        <div class="col">
+          <!-- Subir audio -->
+          <section class="card glass">
+            <header class="card-h">
+              <h2>📤 Subir audio</h2>
+            </header>
+            <form id="uploadForm" class="row">
+              <input id="audioFile" type="file" accept="audio/*" aria-label="Archivo de audio" />
+              <button type="submit" class="btn">Subir</button>
+            </form>
+            <span id="uploadMsg" class="muted feedback-msg"></span>
+          </section>
+
+          <!-- Agregar canción -->
+          <section class="card glass">
+            <header class="card-h">
+              <h2>➕ Agregar canción</h2>
+            </header>
+            <form id="addForm" class="add-form">
+              <input name="title" placeholder="Título" required maxlength="100" />
+              <input name="artist" placeholder="Artista" required maxlength="100" />
+              <input name="url" placeholder="URL MP3/WAV (o usa Subir audio)" required />
+              <div class="row radios">
+                <label><input type="radio" name="position" value="start" /> Inicio</label>
+                <label><input type="radio" name="position" value="end" checked /> Final</label>
+                <label><input type="radio" name="position" value="index" /> Índice</label>
+                <input name="index" type="number" min="0" value="0" style="width: 90px;" />
+              </div>
+              <div class="row right">
+                <button type="submit" class="btn">Agregar a playlist</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Lista de canciones -->
+          <section class="card glass">
+            <header class="card-h">
+              <h2 id="plName">🎵 Playlist</h2>
+            </header>
+            <div id="nowPlaying" class="now">Sin canción seleccionada</div>
+            <ul id="list" class="playlist" role="list"></ul>
+          </section>
+        </div>
+
+        <!-- SIDEBAR DERECHA -->
+        <aside class="col">
+          <!-- Fila de reproducción -->
+          <section class="card glass">
+            <header class="card-h">
+              <h2>⏭️ Próximas <span class="pill" id="queueSize">0</span></h2>
+              <button id="clearQueue" class="btn ghost" title="Vaciar fila">Limpiar</button>
+            </header>
+            <ul id="queue" class="queue-list" role="list"></ul>
+          </section>
+
+          <!-- Favoritos -->
+          <section class="card glass">
+            <header class="card-h">
+              <h2>⭐ Favoritos <span class="pill" id="favCount">0</span></h2>
+            </header>
+            <ul id="favorites" class="fav-list" role="list"></ul>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- BARRA DE REPRODUCCIÓN -->
+  <footer class="player-bar glass" role="region" aria-label="Controles de reproducción">
+    <div class="track-meta">
+      <div class="cover ph" id="coverPh" aria-hidden="true"></div>
+      <div class="tm">
+        <div class="tm-title" id="barTitle">—</div>
+        <div class="tm-artist" id="barArtist">—</div>
+      </div>
+    </div>
+
+    <div class="controls center">
+      <button id="prevBtn" class="icon-btn" title="Anterior (Shift + ←)" aria-label="Canción anterior">⮜</button>
+      <button id="playBtn" class="icon-btn big" title="Reproducir/Pausar (Espacio)" aria-label="Reproducir o pausar">▶️</button>
+      <button id="nextBtn" class="icon-btn" title="Siguiente (Shift + →)" aria-label="Siguiente canción">⮞</button>
+    </div>
+
+    <div class="progress">
+      <span id="elapsed" class="time">0:00</span>
+      <input type="range" min="0" max="100" value="0" id="seek" aria-label="Progreso de reproducción" />
+      <span id="remaining" class="time">0:00</span>
+    </div>
+
+    <div class="extras">
+      <button id="repeatBtn" class="icon-btn ghost" title="Repetir: Desactivado" aria-label="Modo repetir">🔁</button>
+      <button id="shuffleBtn" class="icon-btn ghost" title="Aleatorio: Desactivado" aria-label="Modo aleatorio">🔀</button>
+      <div class="vol">
+        <button id="muteBtn" class="icon-btn ghost" title="Silenciar/Activar sonido" aria-label="Silenciar">🔊</button>
+        <input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Control de volumen" />
+      </div>
+    </div>
+
+    <audio id="player" preload="metadata"></audio>
+  </footer>
+
+  <!-- Indicador de carga -->
+  <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+    <div class="spinner"></div>
+    <span>Cargando...</span>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
