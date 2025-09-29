@@ -1,6 +1,5 @@
-import { store } from "..Store.js";
-import { removeFromQueue, jumpTo } from "..api.js";
-
+import { store } from "../state/Store.js";
+import { removeFromQueue, jumpTo } from "../Utils/Api.js";
 export class UpNext {
   constructor() {
     this.queueEl = document.getElementById("queue");

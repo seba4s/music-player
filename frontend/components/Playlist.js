@@ -1,15 +1,15 @@
-import { store } from "C:\Users\Sebas\Documents\music-player\frontend\state\Store.js";
-import { 
-  getPlaylists, 
-  createPlaylist, 
-  activatePlaylist, 
+import { store } from "../state/Store.js";
+import {
+  getPlaylists,
+  createPlaylist,
+  activatePlaylist,
   deletePlaylist,
   toggleFavorite,
   setCurrent,
   removeSong,
   enqueueSong,
   getPlaylist
-} from "C:\Users\Sebas\Documents\music-player\frontend\Utils\api.js";
+} from "../Utils/Api.js";
 
 export class Playlist {
   constructor() {

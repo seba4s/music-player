@@ -1,11 +1,11 @@
-import { store } from "../state/Store.js";
+import { store } from "./state/Store.js";
 import { 
   initializeApp, 
   getPlaylist, 
   getUpNext,
   uploadFile,
   addSong as apiAddSong
-} from "../utils/api.js";
+} from "./Utils/Api.js";
 import { Player } from "./components/Player.js";
 import { Playlist } from "./components/Playlist.js";
 import { UpNext } from "./components/UpNext.js";
@@ -258,7 +258,7 @@ class MusicPlayerApp {
       clearQueueBtn.addEventListener('click', async () => {
         if (confirm('¿Vaciar la fila de reproducción?')) {
           try {
-            const { clearQueue } = await import('../utils/api.js');
+            const { clearQueue } = await import('./Utils/Api.js');
             await clearQueue();
           } catch (error) {
             console.error('Error limpiando la cola:', error);
