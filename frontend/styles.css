@@ -7,7 +7,7 @@
 
 /* ===== VARIABLES DE TEMA ===== */
 :root {
-  --bg: #0a0c10;
+  --bg: #040b14;
   --fg: #e6e8ee;
   --muted: #9aa3b2;
   --glass: rgba(18, 22, 30, 0.75);
@@ -31,20 +31,31 @@ body {
   line-height: 1.5;
 }
 
-/* ===== BACKGROUND GRADIENT ===== */
-.bg-gradient {
+/* ===== BACKGROUND GRADIENT (versión final) ===== */
+.bg-gradient{
   position: fixed;
-  inset: -20% -10% auto -10%;
-  height: 60vh;
-  background: 
-    radial-gradient(1200px 400px at 10% 20%, rgba(255, 123, 123, 0.2), transparent 60%),
-    radial-gradient(900px 500px at 80% 10%, rgba(87, 210, 255, 0.15), transparent 60%),
-    radial-gradient(800px 500px at 50% 0%, rgba(123, 92, 255, 0.15), transparent 60%);
-  filter: blur(25px) saturate(120%);
-  pointer-events: none;
+  inset: 0;
   z-index: -1;
-  animation: gradientShift 15s ease-in-out infinite;
+  pointer-events: none;
+
+  /* Viñetas suave arriba y abajo + degradado vertical a azul */
+  background:
+    radial-gradient(140% 160% at 50% -10%, rgba(0,0,0,.55), transparent 55%),
+    radial-gradient(140% 160% at 50% 110%, rgba(0,0,0,.35), transparent 55%),
+    linear-gradient(
+      to bottom,
+      #000000 0%,
+      #031b26 14%,
+      #063546 34%,
+      #075a7a 58%,
+      #0a7aa8 82%,
+      #0e84b6 100%
+    );
+  filter: none;
+  animation: none;
 }
+body { background: #000000; }
+
 
 @keyframes gradientShift {
   0%, 100% { opacity: 1; }
@@ -54,9 +65,11 @@ body {
 /* ===== LAYOUT PRINCIPAL ===== */
 .shell {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 250px 1fr;
   min-height: 100dvh;
   transition: var(--transition);
+  max-width: 100vw;
+  overflow: hidden;
 }
 
 /* ===== SIDEBAR ===== */
@@ -64,11 +77,13 @@ body {
   position: sticky;
   top: 0;
   height: 100dvh;
-  padding: 20px 16px;
+  width: 250px;
+  padding: 12px;
   border-right: 1px solid var(--stroke);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--stroke) transparent;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow-x: hidden;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -81,10 +96,10 @@ body {
 }
 
 .glass {
-  background: var(--glass);
-  backdrop-filter: blur(16px) saturate(120%);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
-  border: 1px solid var(--stroke);
+  background: rgba(8, 19, 32, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(87, 210, 255, 0.1);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   transition: var(--transition);
@@ -100,8 +115,9 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 8px;
-  margin-bottom: 12px;
+  padding: 8px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -143,7 +159,7 @@ body {
 .side-nav .section {
   color: var(--muted);
   font-size: 11px;
-  margin: 20px 8px 8px;
+  margin: 12px 4px 6px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 600;
@@ -180,8 +196,33 @@ body {
 /* ===== PLAYLIST PICKER ===== */
 .playlist-picker {
   display: grid;
-  gap: 10px;
-  margin: 12px 8px 0;
+  gap: 8px;
+  margin: 8px 0 0;
+  min-height: 0;
+  flex: 1;
+  width: 100%;
+  max-width: 226px;
+}
+
+.playlist-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: var(--transition);
+}
+
+.playlist-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
+}
+
+.playlist-item.active {
+  background: rgba(87, 210, 255, 0.12);
+  border: 1px solid rgba(87, 210, 255, 0.3);
 }
 
 .playlist-picker select {
@@ -207,19 +248,29 @@ body {
 }
 
 .new-pl {
+  position: relative;
   display: flex;
-  gap: 8px;
+  margin-top: 8px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 226px;
+  align-items: center;
 }
 
 .new-pl input {
-  flex: 1;
-  padding: 10px 12px;
-  border-radius: 10px;
+  width: 100%;
+  padding: 6px 40px 6px 10px;
+  border-radius: 8px;
   background: #11161d;
   color: var(--fg);
   border: 1px solid var(--stroke);
   transition: var(--transition);
   font-size: 14px;
+  height: 32px;
 }
 
 .new-pl input:focus {
@@ -228,8 +279,20 @@ body {
 }
 
 .new-pl button {
-  padding: 10px 16px;
-  font-size: 18px;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0;
+  font-size: 20px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* ===== GRID ===== */
@@ -248,8 +311,12 @@ body {
 
 /* ===== CARDS ===== */
 .card {
-  padding: 20px;
+  padding: 24px;
   transition: var(--transition);
+  background: rgba(8, 19, 32, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow);
 }
 
 .card-h {
@@ -315,21 +382,29 @@ body {
 /* ===== FORMS ===== */
 .add-form {
   display: grid;
-  gap: 12px;
+  gap: 16px;
+  background: rgb(255 255 255 / 15%);
+  padding: 24px;
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow);
 }
 
 .add-form input[type="text"],
 .add-form input[type="url"],
+.add-form input[type="file"],
 .add-form input[name="title"],
 .add-form input[name="artist"],
 .add-form input[name="url"] {
-  padding: 12px 14px;
-  border-radius: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
   border: 1px solid var(--stroke);
-  background: #11161d;
+  background: rgba(17, 22, 29, 0.6);
   color: var(--fg);
   transition: var(--transition);
   font-size: 14px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .add-form input:focus {
@@ -494,6 +569,10 @@ body {
   padding: 14px 20px;
   z-index: 100;
   animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(8, 19, 32, 0.85);
+  border: 1px solid rgba(87, 210, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
 @keyframes slideUp {
@@ -679,6 +758,59 @@ body {
   transition: var(--transition);
 }
 
+/* ===== FILE INPUT CUSTOM STYLING ===== */
+.file-input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+input[type="file"] {
+  position: relative;
+  z-index: 2;
+  width: 33%;
+  height: 54px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #11161d;
+  color: var(--fg);
+  border: 1px solid var(--stroke);
+  transition: var(--transition);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+  display: inline-block;
+  position: relative;
+  z-index: 3;
+  padding: 8px 16px;
+  margin-right: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #06121b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+input[type="file"]:hover::file-selector-button {
+  background: #45c0f0;
+  transform: translateY(-1px);
+}
+
+input[type="file"]:focus {
+  outline: 2px solid var(--primary);
+  background: #141a22;
+}
+
+body[data-theme="light"] input[type="file"] {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
 /* ===== LOADING INDICATOR ===== */
 .loading-indicator {
   position: fixed;
@@ -696,7 +828,7 @@ body {
   z-index: 1000;
   box-shadow: var(--shadow);
   animation: slideDown 0.3s ease;
-}
+} 
 
 @keyframes slideDown {
   from {
@@ -732,15 +864,31 @@ body[data-theme="light"] {
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+body[data-theme="light"] {
+  background:
+    /* viñeta arriba */
+    radial-gradient(140% 160% at 50% -10%, rgba(0,0,0,.08), transparent 55%),
+    /* viñeta abajo */
+    radial-gradient(140% 160% at 50% 110%, rgba(0,0,0,.08), transparent 55%),
+    /* degradado vertical a celeste */
+    linear-gradient(
+      to bottom,
+      #ffffff 0%,
+      #f0f9ff 14%,
+      #e0f2fe 34%,
+      #bae6fd 58%,
+      #7dd3fc 82%,
+      #38bdf8 100%
+    );
+  background-attachment: fixed;
+}
+
 body[data-theme="light"] .logo {
   box-shadow: 0 4px 12px rgba(123, 92, 255, 0.3);
 }
 
 body[data-theme="light"] .bg-gradient {
-  background: 
-    radial-gradient(1200px 400px at 10% 20%, rgba(255, 123, 123, 0.15), transparent 60%),
-    radial-gradient(900px 500px at 80% 10%, rgba(87, 210, 255, 0.1), transparent 60%),
-    radial-gradient(800px 500px at 50% 0%, rgba(123, 92, 255, 0.1), transparent 60%);
+  display: none;
 }
 
 body[data-theme="light"] .sidebar,
@@ -870,6 +1018,120 @@ body[data-theme="light"] .fav-list li:hover {
   outline-offset: 2px;
 }
 
+/* ===== MEJORADOS ESTILOS DE SUBIDA DE ARCHIVOS ===== */
+.upload-form {
+  background: rgba(8, 19, 32, 0.4);
+  padding: 24px;
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+
+.upload-form h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--fg);
+}
+
+.upload-area {
+  position: relative;
+  width: 100%;
+  min-height: 120px;
+  border: 2px dashed var(--stroke);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  gap: 12px;
+  transition: var(--transition);
+  background: rgba(17, 22, 29, 0.3);
+  cursor: pointer;
+}
+
+.upload-area:hover {
+  border-color: var(--primary);
+  background: rgba(17, 22, 29, 0.5);
+}
+
+.upload-icon {
+  font-size: 32px;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.upload-text {
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+input[type="file"] {
+  width: 32%;
+  height: 60px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(17, 22, 29, 0.6);
+  color: var(--fg);
+  border: 1px solid var(--stroke);
+  transition: var(--transition);
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input[type="file"]:hover {
+  background: rgba(17, 22, 29, 0.8);
+  border-color: rgba(87, 210, 255, 0.3);
+}
+
+input[type="file"]::file-selector-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  margin-right: 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary) 0%, #45c0f0 100%);
+  color: #06121b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 2px 6px rgba(87, 210, 255, 0.3);
+}
+
+input[type="file"]::file-selector-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(87, 210, 255, 0.4);
+  background: linear-gradient(135deg, #45c0f0 0%, var(--primary) 100%);
+}
+
+body[data-theme="light"] .upload-area {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+body[data-theme="light"] .upload-area:hover {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--primary);
+}
+
+body[data-theme="light"] input[type="file"] {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+body[data-theme="light"] input[type="file"]:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: var(--primary);
+}
+
 /* ===== PRINT STYLES ===== */
 @media print {
   .sidebar,
@@ -886,4 +1148,44 @@ body[data-theme="light"] .fav-list li:hover {
   .content {
     padding: 0;
   }
+}
+
+/* 1) NO usaremos la capa .bg-gradient */
+.bg-gradient{ display: none !important; }
+
+/* 2) Fondo degradado puro en toda la página */
+html, body { height: 100%; }
+body{
+  background:
+    /* viñeta arriba */
+    radial-gradient(140% 160% at 50% -10%, rgba(0,0,0,.55), transparent 55%),
+    /* viñeta abajo */
+    radial-gradient(140% 160% at 50% 110%, rgba(0,0,0,.35), transparent 55%),
+    /* degradado vertical a azul */
+    linear-gradient(
+      to bottom,
+      #000000 0%,
+      #031b26 14%,
+      #063546 34%,
+      #075a7a 58%,
+      #0a7aa8 82%,
+      #0e84b6 100%
+    );
+  background-attachment: fixed; /* se queda fijo al hacer scroll */
+}
+
+/* 3) Sidebar traslúcida para que se vea el degradado detrás */
+.sidebar{
+  background: rgba(8, 19, 32, 0.72) !important;   /* leve tinte azulado */
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-right: 1px solid rgba(87,210,255,0.10);
+}
+
+/* Ajuste del sidebar para tema claro */
+body[data-theme="light"] .sidebar {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
